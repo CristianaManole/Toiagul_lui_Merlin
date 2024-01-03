@@ -11,7 +11,7 @@ pygame.init()
 
 pygame.display.set_caption("Toiagul lui Merlin")
 
-WIDTH, HEIGHT = 1200, 800
+WIDTH, HEIGHT = 800, 600
 FPS = 60
 PLAYER_VEL = 5
 
@@ -76,6 +76,17 @@ def draw(window, background, bg_image, player):
     player.draw(window)
     pygame.display.update()
 
+def handle_movement(player):
+    keys = pygame.key.get_pressed()
+
+    player.x_vel = 0
+    #am pus valoarea 0 pentru ca daca nu apasam nimic, player-ul sa nu se miste
+
+    if keys[pygame.K_a]:
+        player.move_left(PLAYER_VEL)
+    if keys[pygame.K_d]:
+        player.move_right(PLAYER_VEL)
+
 def main(window):
     clock = pygame.time.Clock()
     # setez background-ul
@@ -90,6 +101,8 @@ def main(window):
             if event.type == pygame.QUIT:
                 run = False
                 break
+        player.loop(FPS)
+        handle_movement(player)
         draw(window, background, bg_image, player)
 
     pygame.quit()
