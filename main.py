@@ -99,6 +99,11 @@ class Player(pygame.sprite.Sprite):
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
 
+    def update(self):
+        self.rect = self.sprite.get_rect(topLeft = (self.rect.x, self.rect.y))
+        self.mask = pygame.mask.from_surface(self.sprite)
+        #mask imi modifica dreptunghiul (box collider-ul) in functie de marimea caracterului(sprite-ului)
+
     def draw(self, window):
         window.blit(self.sprite, (self.rect.x, self.rect.y))
 
