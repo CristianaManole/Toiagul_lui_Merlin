@@ -18,9 +18,12 @@ PLAYER_VEL = 5
 winodws = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
+
+
 class Player(pygame.sprite.Sprite):
     #clasa Player mosteneste clasa Sprite pentru a face o coliziune perfecta intre Sprite-uri
     COLOR = (255, 0, 0)
+    GRAVITY = 1
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
@@ -28,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = None
         self.direction = "left"
         self.animation_count = 0
+        self.fall_count = 0
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -46,7 +50,10 @@ class Player(pygame.sprite.Sprite):
             self.animation_count = 0
 
     def loop(self, fps):
+        self.y_vel += min(1, (self.fall_count / fps) * self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
+
+        self.fall_count += 1
 
     def draw(self, window):
         pygame.draw.rect(window, self.COLOR, self.rect)
@@ -82,9 +89,9 @@ def handle_movement(player):
     player.x_vel = 0
     #am pus valoarea 0 pentru ca daca nu apasam nimic, player-ul sa nu se miste
 
-    if keys[pygame.K_a]:
+    if keys[pygame.K_a] or keys[pygame.K_LEFT]:
         player.move_left(PLAYER_VEL)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
         player.move_right(PLAYER_VEL)
 
 def main(window):
