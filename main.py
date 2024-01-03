@@ -205,6 +205,14 @@ class Fire(Object):
         if self.animation_count // self.ANIMATION_DELAY > len(sprites):
             self.animation_count = 0
 
+class Spike(Object):
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "spike")
+        self.spike = load_sprites_sheets("Traps", "Spikes", width, height)
+        self.image = self.spike["Idle"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        
 
 def get_background(name):
     image = pygame.image.load(join("assets", "Background", name))
@@ -279,7 +287,7 @@ def handle_movement(player, objects):
     vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
     to_check = [collide_left, collide_right, *vertical_collide]
     for obj in to_check:
-        if obj and obj.name == "fire":
+        if obj and (obj.name == "fire" or obj.name == "spike"):
             player.make_hit()
 
 def main(window):
@@ -292,9 +300,10 @@ def main(window):
     player = Player(100, 100, 50, 50)
     fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
     fire.on()
+    spike = Spike(200, HEIGHT - block_size - 100, 15, 7)
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
     objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
-               Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire]
+               Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire, spike]
 
 
     offset_x = 0
