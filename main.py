@@ -249,7 +249,7 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
     if player.alive == False:
         pygame.time.delay(10)
         window.fill((0, 0, 0))
-        font = pygame.font.Font("freesansbold.ttf", 32)
+        font = pygame.font.Font("Grand9K Pixel.ttf", 32)
         text = font.render("GAME OVER! Press R to RESTART", 1, (255, 255, 255))
         textRect = text.get_rect()
         textRect.center = (WIDTH // 2, HEIGHT // 2)
@@ -261,10 +261,10 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
             main(window)
 
     if player.rect.colliderect(objects[len(objects) - 1].rect): #de adaugat pozitia portii sau pun poarta ultima
-        font_in = pygame.font.Font("freesansbold.ttf", 32)
+        font_in = pygame.font.Font("Grand9K Pixel.ttf", 32)
         text_in = font_in.render("Apasa S pentru a intra", 1, (255, 255, 255))
         window.blit(text_in, (100, 100))
-    font = pygame.font.Font("freesansbold.ttf", 32)
+    font = pygame.font.Font("Grand9K Pixel.ttf", 32)
     text = font.render("Lives: " + str(player.lives), 1, (255, 255, 255))
     window.blit(text, (10, 10))
 
