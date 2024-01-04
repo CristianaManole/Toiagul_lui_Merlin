@@ -11,7 +11,7 @@ pygame.init()
 
 pygame.display.set_caption("Toiagul lui Merlin")
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1200, 800
 FPS = 60
 PLAYER_VEL = 5
 
@@ -260,6 +260,10 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
             player.lives = 1
             main(window)
 
+    if player.rect.colliderect(objects[len(objects) - 1].rect): #de adaugat pozitia portii sau pun poarta ultima
+        font_in = pygame.font.Font("freesansbold.ttf", 32)
+        text_in = font_in.render("Apasa S pentru a intra", 1, (255, 255, 255))
+        window.blit(text_in, (100, 100))
     font = pygame.font.Font("freesansbold.ttf", 32)
     text = font.render("Lives: " + str(player.lives), 1, (255, 255, 255))
     window.blit(text, (10, 10))
@@ -294,7 +298,9 @@ def collide(player, objects, dx):
     player.update()
     return collided_object
 
-
+def is_fall_from_map(player):
+    if player.rect.top > HEIGHT:
+        player.make_hit()
 
 def handle_movement(player, objects):
     keys = pygame.key.get_pressed()
@@ -329,7 +335,7 @@ def main(window):
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
     objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
                Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire, spike]
-
+    poarta = [Block(block_size * 6, HEIGHT - block_size * 2, block_size)]
 
     offset_x = 0
     offset_y = 0
@@ -347,11 +353,17 @@ def main(window):
             if event.type == pygame.KEYDOWN:
                 if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.jump_count < 2:
                     player.jump()
+                if player.rect.colliderect(poarta[0].rect):
+                    if (event.key == pygame.K_s or event.key == pygame.K_DOWN):
+                        main(window)
+                        run = False
+                        break
 
+        is_fall_from_map(player)
         player.loop(FPS)
         fire.loop()
         handle_movement(player, objects)
-        draw(window, background, bg_image, player, objects, offset_x, offset_y)
+        draw(window, background, bg_image, player, objects + poarta, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
