@@ -77,6 +77,8 @@ class Player(pygame.sprite.Sprite):
         self.jump_count = 0
         self.hit = False
         self.hit_count = 0
+        self.lives = 1
+        self.alive = True
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
@@ -91,6 +93,10 @@ class Player(pygame.sprite.Sprite):
     
     def make_hit(self):
         self.hit = True
+        if self.lives > 0:
+            self.lives -= 1
+        if self.lives == 0:
+            self.alive = False
         self.hit_count = 0
 
     def move_left(self, vel):
@@ -239,6 +245,25 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
         obj.draw(window, offset_x, offset_y)
 
     player.draw(window, offset_x, offset_y)
+
+    if player.alive == False:
+        pygame.time.delay(10)
+        window.fill((0, 0, 0))
+        font = pygame.font.Font("freesansbold.ttf", 32)
+        text = font.render("GAME OVER! Press R to RESTART", 1, (255, 255, 255))
+        textRect = text.get_rect()
+        textRect.center = (WIDTH // 2, HEIGHT // 2)
+        window.blit(text, textRect)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_r]:
+            player.alive = True
+            player.lives = 1
+            main(window)
+
+    font = pygame.font.Font("freesansbold.ttf", 32)
+    text = font.render("Lives: " + str(player.lives), 1, (255, 255, 255))
+    window.blit(text, (10, 10))
+
     pygame.display.update()
 
 def handle_vertical_collision(player, objects, dy):
