@@ -351,7 +351,7 @@ def main(window):
     block_size = 96
 
     player = Player(block_size, HEIGHT - block_size, 50, 50)
-    fire = Fire(800, HEIGHT - block_size - 64, 16, 32)
+    fire = Fire(block_size * 12 + 32, HEIGHT - block_size - 64, 16, 32)
     fire.on()
     mini_wall = [Block(block_size * 4, HEIGHT - block_size * i, block_size) for i in range(2, 4)]
     mini_wall.append(Block(block_size * 5, HEIGHT - block_size * 3, block_size))
@@ -364,18 +364,28 @@ def main(window):
                Spike(block_size * 7 + 3, HEIGHT - block_size * 4 - 14, 15, 7),
                Spike(block_size * 5 + 13, HEIGHT - block_size * 3 - 14, 15, 7),
                Spike(block_size * 5 + 30 + 15, HEIGHT - block_size * 3 - 14, 15, 7),
-               Spike(block_size * 10 + 30 + 33, HEIGHT - block_size - 14, 15, 7)]
+               Spike(block_size * 10 + 30 + 33, HEIGHT - block_size - 14, 15, 7),
+               Block(block_size * 14, HEIGHT - block_size * 5, block_size),
+               Spike(block_size * 12 + 3 + 30, HEIGHT - block_size * 2 - 14, 15, 7),
+               Block(block_size * 14, HEIGHT - block_size * 3, block_size)]
     inv_block = InvisibleBlock(block_size * 9 + 1, HEIGHT - block_size - 64, 32, 32)
     inv_spike = InvisibleBlock(block_size * 10 + 30, HEIGHT - block_size - 64, 32, 32)
+    inv_spike2 = InvisibleBlock(block_size * 12 + 30, HEIGHT - block_size * 2 - 64, 32, 32)
     touchable_spike = [Spike(block_size * 10 + 13, HEIGHT - block_size * 6 - 14, 15, 7), 
                        Spike(block_size * 10 + 30 + 15, HEIGHT - block_size * 6  - 14, 15, 7)]
+    touchable_fire = Fire(block_size * 14 + 32, HEIGHT - block_size - 64, 16, 32)
+    touchable_fire.on()
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-2, (WIDTH * 2) // block_size)]
     wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
     wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
     wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
     wall4 = [Block(block_size * 10, HEIGHT - block_size * i, block_size) for i in range(8, (HEIGHT * 2) // block_size)]
-    objects = [*wall1, *wall2, *wall3, *floor, fire, *terrain, *mini_wall, *mini_wall2, *wall4]
-    poarta = [Gate(block_size * 12 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
+    mini_floor = [Block(i * block_size, HEIGHT - block_size * 4, block_size) for i in range(12,15)]
+    wall5 = [Block(block_size * 17, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    wall6 = [Block(block_size * 18, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    wall7 = [Block(block_size * 19, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    objects = [*wall1, *wall2, *wall3, *floor, fire, *terrain, *mini_wall, *mini_wall2, *wall4, *mini_floor, *wall5, *wall6, *wall7]
+    poarta = [Gate(block_size * 13 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
 
 
     offset_x = 0
@@ -392,7 +402,7 @@ def main(window):
                 break
 
             if event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.jump_count < 2:
+                if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.jump_count < 200:
                     player.jump()
                 if player.rect.colliderect(poarta[0].rect):
                     if (event.key == pygame.K_s or event.key == pygame.K_DOWN):
@@ -404,8 +414,9 @@ def main(window):
         is_fall_from_map(player)
         player.loop(FPS)
         fire.loop()
+        touchable_fire.loop()
         handle_movement(player, objects)
-        draw(window, background, bg_image, player, objects + touchable_spike + [inv_block] + [inv_spike] + poarta, offset_x, offset_y)
+        draw(window, background, bg_image, player, objects + [touchable_fire] + touchable_spike + [inv_block] + [inv_spike] + [inv_spike2] + poarta, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
