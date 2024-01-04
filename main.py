@@ -218,7 +218,20 @@ class Spike(Object):
         self.spike = load_sprites_sheets("Traps", "Spikes", width, height)
         self.image = self.spike["Idle"][0]
         self.mask = pygame.mask.from_surface(self.image)
-        
+
+class Gate(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "gate")
+        self.gate = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.gate["gate"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+class InvisibleBlock(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "invisible_block")
+        self.inv_block = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.inv_block["Dark_blue"][0]
+        self.mask = pygame.mask.from_surface(self.image)
 
 def get_background(name):
     image = pygame.image.load(join("assets", "Background", name))
@@ -329,13 +342,17 @@ def main(window):
     block_size = 96
 
     player = Player(block_size * 3, HEIGHT - block_size, 50, 50)
-    fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
+    fire = Fire(500, HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    spike = Spike(200, HEIGHT - block_size - 100, 15, 7)
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
-    objects = [*floor, Block(0, HEIGHT - block_size * 2, block_size), 
-               Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire, spike]
-    poarta = [Block(block_size * 6, HEIGHT - block_size * 2, block_size)]
+    spike = Spike(200, HEIGHT - block_size - 14, 15, 7)
+    # inv_block = InvisibleBlock(0, HEIGHT - block_size * 2 - 64, 32, 32)
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-2, (WIDTH * 2) // block_size)]
+    wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
+    objects = [*wall1, *wall2, *wall3, *floor, Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire, spike]
+    poarta = [Gate(block_size * 6 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
+
 
     offset_x = 0
     offset_y = 0
