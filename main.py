@@ -154,8 +154,8 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.sprite)
         #mask imi modifica dreptunghiul (box collider-ul) in functie de marimea caracterului(sprite-ului)
 
-    def draw(self, window, offset_x):
-        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
+    def draw(self, window, offset_x, offset_y):
+        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y - offset_y))
 
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name = None):
@@ -166,8 +166,8 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.name = name
 
-    def draw(self, window, offset_x):
-        window.blit(self.image, (self.rect.x - offset_x, self.rect.y))
+    def draw(self, window, offset_x, offset_y):
+        window.blit(self.image, (self.rect.x - offset_x, self.rect.y - offset_y))
 
 class Block(Object):
     def __init__(self, x, y, size):
@@ -230,15 +230,15 @@ def get_background(name):
     return tiles, image
 
 
-def draw(window, background, bg_image, player, objects, offset_x):
+def draw(window, background, bg_image, player, objects, offset_x, offset_y):
     for tile in background:
         window.blit(bg_image, tile)
         # tile reprezinta pozitia
 
     for obj in objects:
-        obj.draw(window, offset_x)
+        obj.draw(window, offset_x, offset_y)
 
-    player.draw(window, offset_x)
+    player.draw(window, offset_x, offset_y)
     pygame.display.update()
 
 def handle_vertical_collision(player, objects, dy):
@@ -297,7 +297,7 @@ def main(window):
 
     block_size = 96
 
-    player = Player(100, 100, 50, 50)
+    player = Player(block_size * 3, HEIGHT - block_size, 50, 50)
     fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
     fire.on()
     spike = Spike(200, HEIGHT - block_size - 100, 15, 7)
@@ -307,7 +307,9 @@ def main(window):
 
 
     offset_x = 0
+    offset_y = 0
     scroll_area_width = 200
+    scroll_area_height = 90
 
     run = True
     while run:
@@ -324,10 +326,12 @@ def main(window):
         player.loop(FPS)
         fire.loop()
         handle_movement(player, objects)
-        draw(window, background, bg_image, player, objects, offset_x)
+        draw(window, background, bg_image, player, objects, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
+        if (player.rect.bottom - offset_y >= HEIGHT - scroll_area_height and player.y_vel > 0) or (player.rect.top - offset_y <= scroll_area_height and player.y_vel < 0):
+            offset_y += player.y_vel
 
     pygame.quit()
     quit()
