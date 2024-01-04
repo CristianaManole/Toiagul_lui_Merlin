@@ -79,6 +79,7 @@ class Player(pygame.sprite.Sprite):
         self.hit_count = 0
         self.lives = 1
         self.alive = True
+        self.tch_hidden = False
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
@@ -90,7 +91,10 @@ class Player(pygame.sprite.Sprite):
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
-    
+
+    def touch_hidden(self):
+        self.tch_hidden = True
+
     def make_hit(self):
         self.hit = True
         if self.lives > 0:
@@ -259,6 +263,11 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
 
     player.draw(window, offset_x, offset_y)
 
+    if player.tch_hidden == True:
+        font_h = pygame.font.Font("Grand9K Pixel.ttf", 32)
+        text_h = font_h.render("Nu totul este ceea ce pare a fi", 1, (255, 255, 255))
+        window.blit(text_h, (400, 10))
+
     if player.alive == False:
         pygame.time.delay(10)
         window.fill((0, 0, 0))
@@ -341,17 +350,26 @@ def main(window):
 
     block_size = 96
 
-    player = Player(block_size * 3, HEIGHT - block_size, 50, 50)
-    fire = Fire(500, HEIGHT - block_size - 64, 16, 32)
+    player = Player(block_size, HEIGHT - block_size, 50, 50)
+    fire = Fire(800, HEIGHT - block_size - 64, 16, 32)
     fire.on()
-    spike = Spike(200, HEIGHT - block_size - 14, 15, 7)
-    # inv_block = InvisibleBlock(0, HEIGHT - block_size * 2 - 64, 32, 32)
+    spike1 = Spike(block_size * 5 + 13, HEIGHT - block_size * 3 - 14, 15, 7)
+    spike2 = Spike(block_size * 5 + 30 + 15, HEIGHT - block_size * 3 - 14, 15, 7)
+    mini_wall = [Block(block_size * 4, HEIGHT - block_size * i, block_size) for i in range(2, 4)]
+    mini_wall.append(Block(block_size * 5, HEIGHT - block_size * 3, block_size))
+    terrain = [Block(block_size * 2, HEIGHT - block_size * 2, block_size),
+               Block(block_size * 7, HEIGHT - block_size * 4, block_size),
+               Block(block_size * 8, HEIGHT - block_size * 4, block_size),
+               Spike(block_size * 6 + 13, HEIGHT - block_size - 14, 15, 7),
+               Spike(block_size * 6 + 30 + 15, HEIGHT - block_size - 14, 15, 7),
+               Spike(block_size * 7 + 3, HEIGHT - block_size * 4 - 14, 15, 7)]
+    inv_block = InvisibleBlock(block_size * 9, HEIGHT - block_size - 64, 32, 32)
     floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-2, (WIDTH * 2) // block_size)]
     wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
     wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
     wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
-    objects = [*wall1, *wall2, *wall3, *floor, Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire, spike]
-    poarta = [Gate(block_size * 6 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
+    objects = [*wall1, *wall2, *wall3, *floor, fire, spike1, spike2, *mini_wall, *terrain]
+    poarta = [Gate(block_size * 12 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
 
 
     offset_x = 0
@@ -375,12 +393,13 @@ def main(window):
                         main(window)
                         run = False
                         break
-
+        if player.rect.colliderect(inv_block.rect):
+            player.touch_hidden()
         is_fall_from_map(player)
         player.loop(FPS)
         fire.loop()
         handle_movement(player, objects)
-        draw(window, background, bg_image, player, objects + poarta, offset_x, offset_y)
+        draw(window, background, bg_image, player, objects + [inv_block] + poarta, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
