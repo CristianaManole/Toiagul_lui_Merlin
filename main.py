@@ -474,7 +474,7 @@ def main(window):
                 break
 
             if event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.jump_count < 200:
+                if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.jump_count < 2:
                     player.jump()
                 if player.rect.colliderect(poarta[0].rect):
                     if (event.key == pygame.K_s or event.key == pygame.K_DOWN):
