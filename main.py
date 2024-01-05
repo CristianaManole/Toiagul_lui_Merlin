@@ -335,6 +335,11 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
         font_in = pygame.font.Font("Grand9K Pixel.ttf", 32)
         text_in = font_in.render("Apasa S pentru a revendica Toiagul", 1, (255, 255, 255))
         window.blit(text_in, (300, 100))
+
+    if player.rect.colliderect(objects[len(objects) - 4].rect): 
+        font_in = pygame.font.Font("Grand9K Pixel.ttf", 32)
+        text_in = font_in.render("Felicitari, ai gasit comoara ascunsa!", 1, (255, 255, 255))
+        window.blit(text_in, (300, 100))
     
     if player.rect.colliderect(objects[len(objects) - 2].rect):
         font_sec = pygame.font.Font("Grand9K Pixel.ttf", 32)
@@ -530,7 +535,7 @@ def main(window):
         fire.loop()
         touchable_fire.loop()
         handle_movement(player, objects + [inv_block2])
-        draw(window, background, bg_image, player, objects + touchable_wall + chest + [touchable_fire] + touchable_spike + [inv_block] + [inv_spike] + [inv_spike2] + staff + [secret_path] + poarta, offset_x, offset_y)
+        draw(window, background, bg_image, player, objects + touchable_wall + [touchable_fire] + touchable_spike + [inv_block] + [inv_spike] + [inv_spike2] + chest +staff + [secret_path] + poarta, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
