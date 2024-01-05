@@ -81,9 +81,13 @@ class Player(pygame.sprite.Sprite):
         self.alive = True
         self.tch_hidden = False
         self.finish = False
+        self.win = False
 
     def finished(self):
         self.finish = True
+
+    def won(self):
+        self.win = True
 
     def jump(self):
         self.y_vel = -self.GRAVITY * 8
@@ -298,6 +302,11 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
         text_in = font_in.render("Apasa S pentru a intra", 1, (255, 255, 255))
         window.blit(text_in, (100, 100))
     
+    if player.rect.colliderect(objects[len(objects) - 3].rect): 
+        font_in = pygame.font.Font("Grand9K Pixel.ttf", 32)
+        text_in = font_in.render("Apasa S pentru a revendica Toiagul", 1, (255, 255, 255))
+        window.blit(text_in, (300, 100))
+    
     if player.rect.colliderect(objects[len(objects) - 2].rect):
         font_sec = pygame.font.Font("Grand9K Pixel.ttf", 32)
         text_sec = font_sec.render("-->", 1, (255, 255, 255))
@@ -311,7 +320,7 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
         pygame.time.delay(10)
         window.fill((0, 0, 0))
         font = pygame.font.Font("Grand9K Pixel.ttf", 32)
-        text = font.render("Felicitari, ai ajuns la final dar nu ai gasit toiagul!", 1, (255, 255, 255))
+        text = font.render("Felicitari, ai ajuns la final dar nu ai gasit Toiagul!", 1, (255, 255, 255))
         text2 = font.render("Apasa R pentru a reveni la inceput", 1, (255, 255, 255))
         textRect = text.get_rect()
         textRect2 = text2.get_rect()
@@ -326,8 +335,25 @@ def draw(window, background, bg_image, player, objects, offset_x, offset_y):
             player.finish = False
             main(window)
 
+    if player.win == True:
+        pygame.time.delay(10)
+        window.fill((0, 0, 0))
+        font = pygame.font.Font("Grand9K Pixel.ttf", 32)
+        text = font.render("Felicitari, ai gasit Toiagul lui Merlin", 1, (255, 255, 255))
+        text2 = font.render("Apasa R pentru a juca din nou nivelul", 1, (255, 255, 255))
+        textRect = text.get_rect()
+        textRect2 = text2.get_rect()
+        textRect.center = (WIDTH // 2, HEIGHT // 2)
+        textRect2.center = (WIDTH // 2, HEIGHT // 2 + 64)
+        window.blit(text, textRect)
+        window.blit(text2, textRect2)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_r]:
+            player.alive = True
+            player.lives = 1
+            player.finish = False
+            main(window)
 
-    
     pygame.display.update()
 
 def handle_vertical_collision(player, objects, dy):
@@ -384,7 +410,7 @@ def handle_movement(player, objects):
 def main(window):
     clock = pygame.time.Clock()
     # setez background-ul
-    background, bg_image = get_background("Blue.png")
+    background, bg_image = get_background("Dark_blue.png")
 
     block_size = 96
 
@@ -453,6 +479,9 @@ def main(window):
                 if player.rect.colliderect(poarta[0].rect):
                     if (event.key == pygame.K_s or event.key == pygame.K_DOWN):
                         player.finished()
+                if player.rect.colliderect(staff[0].rect):
+                    if (event.key == pygame.K_s or event.key == pygame.K_DOWN):
+                        player.won()
                 
         if player.rect.colliderect(inv_block.rect) or player.rect.colliderect(inv_spike.rect):
             player.touch_hidden()
