@@ -245,25 +245,32 @@ class Staff(Object):
         self.image = self.staff["toiag"][0]
         self.mask = pygame.mask.from_surface(self.image)
 
+class Chest(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "chest")
+        self.chest = load_sprites_sheets("Items", "Chest", width, height)
+        self.image = self.chest["chest"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
 class Cube(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "cube")
-        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
-        self.image = self.staff["cube"][0]
+        self.cube = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.cube["cube"][0]
         self.mask = pygame.mask.from_surface(self.image)
 
 class HorizontalTile(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "horizontal_tile")
-        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
-        self.image = self.staff["horizontal_tile"][0]
+        self.horizontal_tile = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.horizontal_tile["horizontal_tile"][0]
         self.mask = pygame.mask.from_surface(self.image)
 
 class MiniCube(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "mini_cube")
-        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
-        self.image = self.staff["mini_cube"][0]
+        self.mini_cube = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.mini_cube["mini_cube"][0]
         self.mask = pygame.mask.from_surface(self.image)
 
 
@@ -457,7 +464,7 @@ def main(window):
                Block(block_size * 14, HEIGHT - block_size * 5, block_size),
                Spike(block_size * 12 + 3 + 30, HEIGHT - block_size * 2 - 14, 15, 7),
                Block(block_size * 14, HEIGHT - block_size * 3, block_size)]
-    golden_path =  [HorizontalTile(block_size * i, HEIGHT - block_size * 11 - 32, 48, 16) for i in range(-2, 20)]
+    golden_path =  [HorizontalTile(block_size * i, HEIGHT - block_size * 11 - 32, 48, 16) for i in range(-1, 20)]
     secret_terrain = [HorizontalTile(block_size * 28, HEIGHT - block_size - 32, 48, 16),
                       MiniCube(block_size * 30 + 32, HEIGHT - block_size * 2 - 32, 16, 16),
                       HorizontalTile(block_size * 28, HEIGHT + 32 - block_size * 4 - 32, 48, 16),
@@ -476,11 +483,11 @@ def main(window):
                        Spike(block_size * 10 + 30 + 15, HEIGHT - block_size * 6  - 14, 15, 7)]
     touchable_fire = Fire(block_size * 14 + 32, HEIGHT - block_size - 64, 16, 32)
     touchable_fire.on()
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-15, (WIDTH * 2) // block_size - 5)]
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-2, (WIDTH * 2) // block_size - 5)]
     floor2 = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range((WIDTH * 2) // block_size - 3, (WIDTH * 2) // block_size + 6)]
     wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range(12)]
     wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range(12)]
-    wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range(12)]
+    wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range(18)]
     wall4 = [Block(block_size * 10, HEIGHT - block_size * i, block_size) for i in range(8, 12)]
     mini_floor = [Block(i * block_size, HEIGHT - block_size * 4, block_size) for i in range(12,15)]
     wall5 = [Block(block_size * 17, HEIGHT - i * block_size, block_size) for i in range(8,12)]
@@ -491,6 +498,7 @@ def main(window):
                *mini_wall3, *mini_wall4, *mini_wall5, *secret_terrain]
     poarta = [Gate(block_size * 13 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
     staff = [Staff(block_size * 27 - 60, HEIGHT - block_size - 100, 10, 45)]
+    chest = [Chest(27, HEIGHT - block_size * 11 - 72, 23, 20)]
 
     offset_x = 0
     offset_y = 0
@@ -522,7 +530,7 @@ def main(window):
         fire.loop()
         touchable_fire.loop()
         handle_movement(player, objects + [inv_block2])
-        draw(window, background, bg_image, player, objects + touchable_wall + [touchable_fire] + touchable_spike + [inv_block] + [inv_spike] + [inv_spike2] + staff + [secret_path] + poarta, offset_x, offset_y)
+        draw(window, background, bg_image, player, objects + touchable_wall + chest + [touchable_fire] + touchable_spike + [inv_block] + [inv_spike] + [inv_spike2] + staff + [secret_path] + poarta, offset_x, offset_y)
 
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_vel > 0) or (player.rect.left - offset_x <= scroll_area_width and player.x_vel < 0):
             offset_x += player.x_vel
