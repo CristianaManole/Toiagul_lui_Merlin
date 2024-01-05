@@ -245,6 +245,28 @@ class Staff(Object):
         self.image = self.staff["toiag"][0]
         self.mask = pygame.mask.from_surface(self.image)
 
+class Cube(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "cube")
+        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.staff["cube"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+class HorizontalTile(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "horizontal_tile")
+        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.staff["horizontal_tile"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+class MiniCube(Object):
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "mini_cube")
+        self.staff = load_sprites_sheets("Terrain", "Blocks", width, height)
+        self.image = self.staff["mini_cube"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+
+
 class InvisibleBlock(Object):
     def __init__(self, x, y, width, height):
         super().__init__(x, y, width, height, "invisible_block")
@@ -435,6 +457,16 @@ def main(window):
                Block(block_size * 14, HEIGHT - block_size * 5, block_size),
                Spike(block_size * 12 + 3 + 30, HEIGHT - block_size * 2 - 14, 15, 7),
                Block(block_size * 14, HEIGHT - block_size * 3, block_size)]
+    golden_path =  [HorizontalTile(block_size * i, HEIGHT - block_size * 11 - 32, 48, 16) for i in range(-2, 20)]
+    secret_terrain = [HorizontalTile(block_size * 28, HEIGHT - block_size - 32, 48, 16),
+                      MiniCube(block_size * 30 + 32, HEIGHT - block_size * 2 - 32, 16, 16),
+                      HorizontalTile(block_size * 28, HEIGHT + 32 - block_size * 4 - 32, 48, 16),
+                      HorizontalTile(block_size * 30, HEIGHT - block_size * 6, 48, 16),
+                      HorizontalTile(block_size * 27, HEIGHT - block_size * 8, 48, 16),
+                      MiniCube(block_size * 25, HEIGHT - block_size * 9 - 32, 16, 16),
+                      HorizontalTile(block_size * 22, HEIGHT - block_size * 10, 48, 16),
+                      HorizontalTile(block_size * 20, HEIGHT - block_size * 11, 48, 16),
+                      *golden_path]
     inv_block = InvisibleBlock(block_size * 9 + 1, HEIGHT - block_size - 64, 32, 32)
     inv_block2 = Block(block_size * 16, HEIGHT - block_size * 4, block_size)
     secret_path = InvisibleBlock(block_size * 16 + 32, HEIGHT - block_size * 4 - 64, 32, 32)
@@ -444,21 +476,21 @@ def main(window):
                        Spike(block_size * 10 + 30 + 15, HEIGHT - block_size * 6  - 14, 15, 7)]
     touchable_fire = Fire(block_size * 14 + 32, HEIGHT - block_size - 64, 16, 32)
     touchable_fire.on()
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-2, (WIDTH * 2) // block_size - 5)]
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range(-15, (WIDTH * 2) // block_size - 5)]
     floor2 = [Block(i * block_size, HEIGHT - block_size, block_size) for i in range((WIDTH * 2) // block_size - 3, (WIDTH * 2) // block_size + 6)]
-    wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
-    wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
-    wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range((HEIGHT * 2) // block_size)]
-    wall4 = [Block(block_size * 10, HEIGHT - block_size * i, block_size) for i in range(8, (HEIGHT * 2) // block_size)]
+    wall1 = [Block(0, HEIGHT - i * block_size, block_size) for i in range(12)]
+    wall2 = [Block(-block_size, HEIGHT - i * block_size, block_size) for i in range(12)]
+    wall3 = [Block(-block_size * 2, HEIGHT - i * block_size, block_size) for i in range(12)]
+    wall4 = [Block(block_size * 10, HEIGHT - block_size * i, block_size) for i in range(8, 12)]
     mini_floor = [Block(i * block_size, HEIGHT - block_size * 4, block_size) for i in range(12,15)]
-    wall5 = [Block(block_size * 17, HEIGHT - i * block_size, block_size) for i in range(8,16)]
-    wall6 = [Block(block_size * 18, HEIGHT - i * block_size, block_size) for i in range(8,16)]
-    wall7 = [Block(block_size * 19, HEIGHT - i * block_size, block_size) for i in range(8,16)]
+    wall5 = [Block(block_size * 17, HEIGHT - i * block_size, block_size) for i in range(8,12)]
+    wall6 = [Block(block_size * 18, HEIGHT - i * block_size, block_size) for i in range(8,12)]
+    wall7 = [Block(block_size * 19, HEIGHT - i * block_size, block_size) for i in range(8,12)]
     touchable_wall = [Block(block_size * i, HEIGHT - block_size * 7, block_size) for i in range(17, 20)]
     objects = [*wall1, *wall2, *wall3, *floor, *floor2, fire, *terrain, *mini_wall, *mini_wall2, *wall4, *mini_floor, *wall5, *wall6, *wall7,
-               *mini_wall3, *mini_wall4, *mini_wall5]
+               *mini_wall3, *mini_wall4, *mini_wall5, *secret_terrain]
     poarta = [Gate(block_size * 13 - 3, HEIGHT - block_size - 112, 51, 56)] # pozitia pe axa y se calculeaza dubland inaltimea
-    staff = [Staff(block_size * 27 - 60, HEIGHT - block_size - 90, 10, 45)]
+    staff = [Staff(block_size * 27 - 60, HEIGHT - block_size - 100, 10, 45)]
 
     offset_x = 0
     offset_y = 0
