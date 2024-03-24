@@ -1,1 +1,1 @@
-Welcome to "The Merlin's Staff"! Control wizard Merlin in an exciting 2D platform adventure as you set out to retrieve the lost staff. Explore enchanted worlds, defeat wicked enemies, and uncover magical secrets in this action-packed game!
+Welcome to "The Merlin's Staff"! Control wizard Merlin in an exciting 2D platformer adventure as you set out to retrieve the lost staff. Explore enchanted worlds, defeat wicked enemies, and uncover magical secrets in this action-packed game!
